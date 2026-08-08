@@ -29,38 +29,29 @@ class FilterOverlayService : Service() {
         
         if (filterView == null) {
             filterView = FilterOverlayView(this)
-            val params = WindowManager.LayoutParams().apply {
-                type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                } else {
-                    @Suppress("DEPRECATION")
-                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY
-                }
-                format = PixelFormat.TRANSLUCENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                width = WindowManager.LayoutParams.MATCH_PARENT
-                height = WindowManager.LayoutParams.MATCH_PARENT
-                x = 0
-                y = 0
+            val view = filterView
+            if (view != null) {
+                val params = WindowManager.LayoutParams()
+                params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                params.format = PixelFormat.TRANSLUCENT
+                params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                params.width = WindowManager.LayoutParams.MATCH_PARENT
+                params.height = WindowManager.LayoutParams.MATCH_PARENT
+                windowManager.addView(view, params)
             }
-            windowManager.addView(filterView!!, params)
         }
 
-        filterView?.setSaturation(prefs.getSaturation())
-        filterView?.setTemperature(prefs.getTemperature())
+        if (filterView != null) {
+            filterView!!.setSaturation(prefs.getSaturation())
+            filterView!!.setTemperature(prefs.getTemperature())
+        }
 
         return START_STICKY
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "night_filter",
-                "Filtro de Noche",
-                NotificationManager.IMPORTANCE_LOW
-            )
+            val channel = NotificationChannel("night_filter", "Filtro", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }
@@ -68,8 +59,7 @@ class FilterOverlayService : Service() {
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, "night_filter")
-            .setContentTitle("Filtro Nocturno Activo")
-            .setContentText("El filtro está funcionando")
+            .setContentTitle("Filtro Activo")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setOngoing(true)
             .build()
@@ -77,8 +67,9 @@ class FilterOverlayService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        filterView?.let { windowManager.removeView(it) }
-        filterView = null
+        if (filterView != null) {
+            windowManager.removeView(filterView)
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
