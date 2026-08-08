@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application") version "8.1.0"
-    id("kotlin-android")
+    id("kotlin-android") version "1.9.20"
 }
 
 android {
@@ -43,4 +43,5 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
 }
