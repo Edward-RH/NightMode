@@ -27,5 +27,5 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
+        name: NightMode
         path: app/build/outputs/apk/release/app-release.apk
