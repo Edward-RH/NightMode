@@ -45,7 +45,7 @@ class FilterOverlayService : Service() {
                 x = 0
                 y = 0
             }
-            windowManager.addView(filterView, params)
+            windowManager.addView(filterView!!, params)
         }
 
         filterView?.setSaturation(prefs.getSaturation())
